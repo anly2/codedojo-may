@@ -1,0 +1,124 @@
+<html>
+<head>
+	<title>Code Dojo - Javascript</title>
+	
+	<style type="text/css">
+	body {
+		font-size: 16px;
+	}
+	
+	td {
+		width: 16px;
+		height: 16px;
+		line-height: 1em;
+	}
+	</style>
+	
+</head>
+<body>
+
+<script type="text/javascript">
+var dataset = new Array();
+var moves = new Array();
+
+function clearBoard() {
+	var i,j;
+	for(i=0; i<3; i++) {
+		for(j=0; j<3; j++) {
+			document.getElementById(i+":"+j).innerHTML = " ";
+		}
+	}
+}
+
+function playerWon(p) {
+	dataset.push({moves: moves, winner: p});
+	clearBoard();
+	moves = new Array();
+	player = false;
+}
+function nooneWon() {
+	dataset.push({moves: moves, winner: null});
+	clearBoard();
+	moves = new Array();
+	player = false;
+}
+
+
+var player = false;
+function mark(cell) {
+	var sign = player? "O" : "X";
+	cell.innerHTML = sign;
+	moves.push(cell.id);
+	player = !player;
+}
+
+document.writeln("<table rules='all'>");
+var i,j;
+for(i=0; i<3; i++) {
+	document.writeln("\t" + "<tr>");
+	for(j=0; j<3; j++) {
+		document.writeln("\t\t" + "<td id='"+i+":"+j+"' onclick='mark(this);'></td>");
+	}
+	document.writeln("\t" + "</tr>");
+}
+document.writeln("</table>");
+
+
+function importData() {
+	var data = prompt("Paste the data please");
+	dataset = JSON.parse(data);
+}
+
+function exportData() {
+	prompt("Copy: ", JSON.stringify(dataset));
+}
+
+
+function getCell(id) {
+	return document.getElementById(id);
+}
+
+function play() {
+	var winningExamples = new Array();
+	
+	var i;
+	for(i=0; i<dataset.length; i++) {
+		var example = dataset[i];
+		if (example.winner == player) //current player
+			winningExamples.push(example);
+	}
+	
+	
+	var example = winningExamples[Math.floor(Math.random()*winningExamples.length)];
+	//if (typeof example == "undefined")
+		//play random
+	var n = moves.length;
+	mark(getCell(example.moves[n]));
+	
+	/*
+	var preferred = [
+		"1:1",];
+	
+	var i;
+	for (i=0; i<preferred.length; i++) {
+		var c = getCell(preferred[i]);
+		if (c.innerHTML.trim() = "")
+			mark(c);
+	}
+	*/
+}
+</script>
+
+<button id="player1wins-btn" onclick="playerWon(false);">Player 1 won!</button>
+<button id="player1wins-btn" onclick="playerWon(true);">Player 2 won!</button>
+<button id="draw-btn" onclick="nooneWon();">Draw!</button>
+
+<br /><br />
+<button onclick="play();">Play!</button>
+
+<br /><br />
+<button onclick="importData()">Import</button>
+<button onclick="exportData()">Export</button>
+
+</body>
+</html>
